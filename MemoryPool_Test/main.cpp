@@ -22,17 +22,19 @@ void Func(int iter)
 	}
 }
 
-void L_Func(LockFree_MP<L_TestStruct>& pool, int iter)
+thread_local LockFree_MP<L_TestStruct> LlsPool(100000 / thread::hardware_concurrency());
+
+void L_Func(int iter)
 {
 	for (int i = 0; i < iter; i++)
 	{
-		L_TestStruct* obj = pool.Allocate();
+		L_TestStruct* obj = LlsPool.Allocate();
 
 		obj->a = i;
 		obj->b = i * 2;
 		obj->c = i * 3;
 
-		pool.Deallocate(obj);
+		LlsPool.Deallocate(obj);
 	}
 }
 
@@ -41,8 +43,8 @@ int main()
 	cout << "Test Vector Memory Allocation Time\n";
 	cout << "----------------------------------\n";
 
-	// Vector Memory Pool Test, Block Cnt = 10,000
-	Vector_MP<v_TestStruct> testVecPool(10000);
+	// Vector Memory Pool Test, Block Cnt = 100,000
+	Vector_MP<v_TestStruct> testVecPool(100000);
 	testVecPool.TestMemoryPool();
 
 	cout << '\n' << '\n';
@@ -50,8 +52,8 @@ int main()
 	cout << "Test Queue Memory Allocation Time\n";
 	cout << "---------------------------------\n";
 
-	// Queue Memory Pool Test, Block Cnt = 10,000
-	Queue_MP<q_TestStruct> testQueuePool(10000);
+	// Queue Memory Pool Test, Block Cnt = 100,000
+	Queue_MP<q_TestStruct> testQueuePool(100000);
 	testQueuePool.TestMemoryPool();
 
 	cout << '\n' << '\n';
@@ -59,8 +61,8 @@ int main()
 	cout << "Test Thread Safe Memory Allocation Time\n";
 	cout << "---------------------------------------\n";
 
-	// Thread Safe Memory Pool Test, Block Cnt = 1,000,000
-	ThreadSafe_MP<t_TestStruct> testThreadPool(1000000);
+	// Thread Safe Memory Pool Test, Block Cnt = 100,000
+	ThreadSafe_MP<t_TestStruct> testThreadPool(100000);
 	testThreadPool.TestMemoryPool();
 
 	// Multi Thread Memory Pool Test, Thread = 4
@@ -91,12 +93,12 @@ int main()
 	cout << "Test Lock Free Memory Allocation Time\n";
 	cout << "-------------------------------------\n";
 
-	// Lock Free Memory Pool Test, Block Cnt = 10,000
-	LockFree_MP<L_TestStruct> testLockPool(10000);
+	// Lock Free Memory Pool Test, Block Cnt = 100,000
+	LockFree_MP<L_TestStruct> testLockPool(100000);
 	testLockPool.TestMemoryPool();
 
 	// Multi Thread Lock Free Memory Pool Test, Thread = 4
-	const int L_numThreads = thread::hardware_concurrency();
+	const int L_numThreads = 4;  /*thread::hardware_concurrency()*/
 	const int L_iterPerThread = 250000;
 	
 	vector<thread> L_threads;
@@ -106,7 +108,7 @@ int main()
 	
 	for (int i = 0; i < L_numThreads; i++)
 	{
-		L_threads.emplace_back(L_Func, ref(testLockPool), L_iterPerThread);
+		L_threads.emplace_back(L_Func, L_iterPerThread);
 	}
 	
 	for (auto& t : L_threads)

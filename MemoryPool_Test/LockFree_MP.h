@@ -56,7 +56,7 @@ LockFree_MP<T>::~LockFree_MP()
     while (node)
     {
         Node* next = node->next;
-        delete node->data;
+        //delete node->data;
         delete node;
         node = next;
     }
@@ -95,6 +95,9 @@ T* LockFree_MP<T>::Allocate()
     do
     {
         node = m_Head.load(memory_order_acquire);
+
+        if (!node)
+            return nullptr;
     } 
     while (node && !m_Head.compare_exchange_weak(node, node->next,
                                                 memory_order_release,
@@ -103,12 +106,6 @@ T* LockFree_MP<T>::Allocate()
     if (node)
     {
         return node->data;
-    }
-
-    static atomic<int> warning_count = 0;
-    if (warning_count++ < 10)  // 최대 10회 경고 출력
-    {
-        cerr << "Warning: Pool exhausted. Creating new object.\n";
     }
 
     return new T();
