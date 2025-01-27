@@ -125,8 +125,8 @@ void LockFree_MP<T>::Deallocate(T* obj)
         newNode->next = m_Head.load(memory_order_acquire);
     } 
     while (!m_Head.compare_exchange_weak(newNode->next, newNode,
-                                            memory_order_release,
-                                            memory_order_relaxed));
+                                        memory_order_relaxed,
+                                        memory_order_relaxed));
 }
 
 template <typename T>

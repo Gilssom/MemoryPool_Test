@@ -54,7 +54,7 @@ ThreadSafe_MP<T>::~ThreadSafe_MP()
     }
 }
 
-// 객체 할당 (스레드 안전)
+// 객체 할당
 template<typename T>
 T* ThreadSafe_MP<T>::Allocate()
 {
@@ -62,7 +62,7 @@ T* ThreadSafe_MP<T>::Allocate()
 
     if (m_Pool.empty())
     {
-        return new T();  // 풀에 객체가 없으면 새로 할당
+        return new T();
     }
 
     T* obj = m_Pool.back();
@@ -70,7 +70,7 @@ T* ThreadSafe_MP<T>::Allocate()
     return obj;
 }
 
-// 객체 반환 (스레드 안전)
+// 객체 반환
 template<typename T>
 void ThreadSafe_MP<T>::DeAllocate(T* obj)
 {
@@ -118,5 +118,6 @@ void ThreadSafe_MP<T>::TestMemoryPool()
     }
 
     end = high_resolution_clock::now();
+
     cout << "Thread safe Memory Pool Allocation Time : " << duration<double, milli>(end - start).count() << " ms\n";
 }

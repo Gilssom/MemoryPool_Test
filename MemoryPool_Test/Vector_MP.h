@@ -52,7 +52,6 @@ Vector_MP<T>::~Vector_MP()
 template<typename T>
 T* Vector_MP<T>::Allocate()
 {
-	// pool 에 객체가 없으면 새로 할당
 	if (m_Pool.empty())
 	{
 		return new T();

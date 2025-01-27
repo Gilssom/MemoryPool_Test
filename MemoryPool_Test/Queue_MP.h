@@ -11,8 +11,8 @@ template <typename T>
 class Queue_MP
 {
 private:
-    queue<T*> m_Pool;  // 메모리 풀을 큐로 관리
-    size_t m_Capacity; // 초기 블록 개수
+    queue<T*> m_Pool;  
+    size_t m_Capacity; 
 
 public:
     T* Allocate();
@@ -53,7 +53,7 @@ T* Queue_MP<T>::Allocate()
 {
     if (m_Pool.empty())
     {
-        return new T();  // 풀에 객체가 없으면 새로 생성
+        return new T(); 
     }
 
     T* obj = m_Pool.front();
@@ -108,5 +108,6 @@ void Queue_MP<T>::TestMemoryPool()
     }
 
     end = high_resolution_clock::now();
+
     cout << "Queue Memory Pool Allocation Time : "  << duration<double, milli>(end - start).count() << " ms\n";
 }
